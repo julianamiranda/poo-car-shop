@@ -1,3 +1,4 @@
+import { ErrorTypes } from '../errors/catalog';
 import { CarZodSchema, ICar } from '../interfaces/ICar';
 import { IModel } from '../interfaces/IModel';
 import { IService } from '../interfaces/IService';
@@ -13,6 +14,12 @@ class CarService implements IService<ICar> {
     const result = CarZodSchema.safeParse(obj);
     if (!result.success) throw result.error;
     return this._car.create(result.data);
+  }
+
+  public async read(): Promise<ICar[]> {
+    const result = await this._car.read();
+    if (!result) throw new Error(ErrorTypes.ObjectNotFound);
+    return result;
   }
 }
 
