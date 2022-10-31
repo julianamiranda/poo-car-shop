@@ -6,6 +6,7 @@ import CarModel from '../../../models/cars.model';
 import CarService from '../../../services/cars.services';
 import { allCarsMock, carMock, carMockWithID } from '../../utils/data';
 import { ZodError } from 'zod';
+import { ErrorTypes } from '../../../errors/catalog';
 const { expect } = chai;
 
 describe('Car Service', () => {
@@ -15,6 +16,10 @@ describe('Car Service', () => {
   before(async () => {
     sinon.stub(carModel, 'create').resolves(carMockWithID);
     sinon.stub(carModel, 'read').resolves(allCarsMock);
+    sinon.stub(carModel, 'readOne')
+      .onCall(0).resolves(carMockWithID)
+      .onCall(1).resolves(null);
+
   });
 
   after(() => sinon.restore());
@@ -41,5 +46,22 @@ describe('Car Service', () => {
       const result = await carService.read();
       expect(result).to.be.deep.equal(allCarsMock);
     })
+  });
+
+  describe('ReadOne Frame', () => {
+    it('Success', async () => {
+      const result = await carService.readOne(carMockWithID._id);
+      expect(result).to.be.deep.equal(carMockWithID);
+    });
+
+    it('Failure', async () => {
+      let error;
+      try {
+        await carService.readOne('5edd40c87873e0fb13000004');
+      } catch (err: any) {
+        error = err;
+      }
+      expect(error?.message).to.be.deep.equal(ErrorTypes.ObjectNotFound);
+    });
   });
 });

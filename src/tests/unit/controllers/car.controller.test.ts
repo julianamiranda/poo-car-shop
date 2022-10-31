@@ -6,10 +6,10 @@ import CarModel from '../../../models/cars.model';
 import CarService from '../../../services/cars.services';
 import CarController from '../../../controllers/cars.controller';
 import { Request, Response } from 'express';
-import { allCarsMock, carMock } from '../../utils/data';
+import { allCarsMock, carMock, carMockWithID } from '../../utils/data';
 const { expect } = chai;
 
-describe('Sua descrição', () => {
+describe('Car Controller', () => {
   const carModel = new CarModel();
   const carService = new CarService(carModel);
   const carController = new CarController(carService);
@@ -57,4 +57,17 @@ describe('Sua descrição', () => {
     });
   });
 
+  describe('ReadOne Car', () => {
+    beforeEach(() => {
+      sinon.stub(carService, 'readOne').resolves(carMockWithID);
+    })
+
+    it('Success', async () => {
+      req.params = { id: carMockWithID._id };
+      await carController.readOne(req, res);
+
+      expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true;
+      expect((res.json as sinon.SinonStub).calledWith(carMockWithID)).to.be.true;
+    });
+  });
 });
