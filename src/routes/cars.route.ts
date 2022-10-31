@@ -13,6 +13,7 @@ cars.post('/', (req, res) => carController.create(req, res));
 cars.get('/', (req, res) => carController.read(req, res));
 cars.get('/:id', (req, res) => carController.readOne(req, res));
 cars.put('/:id', (req, res) => carController.update(req, res));
+cars.delete('/:id', (req, res) => carController.delete(req, res));
 
 export default cars;
 
