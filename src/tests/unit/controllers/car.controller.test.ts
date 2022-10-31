@@ -6,7 +6,7 @@ import CarModel from '../../../models/cars.model';
 import CarService from '../../../services/cars.services';
 import CarController from '../../../controllers/cars.controller';
 import { Request, Response } from 'express';
-import { allCarsMock, carMock, carMockWithID } from '../../utils/data';
+import { allCarsMock, carMock, carMockWithID, updatedCarMock } from '../../utils/data';
 const { expect } = chai;
 
 describe('Car Controller', () => {
@@ -70,4 +70,14 @@ describe('Car Controller', () => {
       expect((res.json as sinon.SinonStub).calledWith(carMockWithID)).to.be.true;
     });
   });
+
+  describe('Update Car', () => {
+    it('Success', async () => {
+      sinon.stub(carService, 'update').resolves(updatedCarMock)
+      await carController.update(req, res)
+
+      expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true;
+      expect((res.json as sinon.SinonStub).calledWith(updatedCarMock)).to.be.true;
+    })
+  })
 });

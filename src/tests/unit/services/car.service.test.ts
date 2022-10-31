@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import chai from 'chai';
 import CarModel from '../../../models/cars.model';
 import CarService from '../../../services/cars.services';
-import { allCarsMock, carMock, carMockWithID } from '../../utils/data';
+import { allCarsMock, carMock, carMockWithID, toUpdateCarMock, updatedCarMock } from '../../utils/data';
 import { ZodError } from 'zod';
 import { ErrorTypes } from '../../../errors/catalog';
 const { expect } = chai;
@@ -19,7 +19,6 @@ describe('Car Service', () => {
     sinon.stub(carModel, 'readOne')
       .onCall(0).resolves(carMockWithID)
       .onCall(1).resolves(null);
-
   });
 
   after(() => sinon.restore());
@@ -64,4 +63,34 @@ describe('Car Service', () => {
       expect(error?.message).to.be.deep.equal(ErrorTypes.ObjectNotFound);
     });
   });
+
+  describe('Update Car', () => {
+    it('Success', async () => {
+      sinon.stub(carModel, 'update').resolves(updatedCarMock);
+      const result = await carService.update('4edd40c86762e0fb12000003', toUpdateCarMock);
+      expect(result).to.be.deep.eq(updatedCarMock);
+      sinon.restore();
+    })
+
+    it('Failure - Zod Error', async () => {
+      let error;
+      try {
+        await carService.update('4edd40c86762e0fb12000003', { INVALID: "OBJECT" })
+      } catch (err) {
+        error = err;
+      }
+      expect(error).to.be.instanceOf(ZodError)
+    })
+
+    it('Failure - Object not Found', async () => {
+      sinon.stub(carModel, 'update').resolves(null);
+      let error: any;
+      try {
+        await carService.update('62cf1fc6498565d94eba52cd', toUpdateCarMock)
+      } catch (err) {
+        error = err;
+      }
+      expect(error?.message).to.be.eq(ErrorTypes.ObjectNotFound)
+    })
+  })
 });
