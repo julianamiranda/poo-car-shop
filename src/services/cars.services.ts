@@ -21,6 +21,12 @@ class CarService implements IService<ICar> {
     if (!result) throw new Error(ErrorTypes.ObjectNotFound);
     return result;
   }
+
+  public async readOne(id: string): Promise<ICar> {
+    const result = await this._car.readOne(id);
+    if (!result) throw new Error(ErrorTypes.ObjectNotFound);
+    return result;
+  }
 }
 
 export default CarService;

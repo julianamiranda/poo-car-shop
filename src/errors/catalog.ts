@@ -1,9 +1,9 @@
 export enum ErrorTypes {
-  EntityNotFound = 'EntityNotFound',
+  ObjectNotFound = 'ObjectNotFound',
   InvalidMongoId = 'InvalidMongoId',
 }
 
-type ErrorResponseObject = { 
+type ErrorResponseObject = {
   message: string;
   httpStatus: number
 };
@@ -15,12 +15,14 @@ type ErrorResponseObject = {
 export type ErrorCatalog = Record<ErrorTypes, ErrorResponseObject>;
 
 export const errorCatalog: ErrorCatalog = {
-  EntityNotFound: {
-    message: 'Entity not found',
+  ObjectNotFound: {
+    message: 'Object not found',
     httpStatus: 404,
   },
   InvalidMongoId: {
-    message: 'Id must be a 24 characters hexadecimal',
+    message: 'Id must have 24 hexadecimal characters',
     httpStatus: 400,
   },
 };
+
+// código retirado do código da aula 30.2 (https://github.com/tryber/sd-020-a-live-lectures/tree/lecture/30.2/glassesStore)
