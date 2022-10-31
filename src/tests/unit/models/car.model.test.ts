@@ -4,13 +4,16 @@ import * as sinon from 'sinon';
 import chai from 'chai';
 import CarModel from '../../../models/cars.model';
 import { Model } from 'mongoose';
-import { carMock, carMockWithID } from '../../utils/data';
+import { allCarsMock, carMock, carMockWithID } from '../../utils/data';
 const { expect } = chai;
 
 describe('Car Model', () => {
 	const carModel = new CarModel();
 
-	before(async () => sinon.stub(Model, 'create').resolves(carMockWithID));
+	before(async () => {
+		sinon.stub(Model, 'create').resolves(carMockWithID);
+		sinon.stub(Model, 'find').resolves(allCarsMock);
+	});
 
 	after(() => sinon.restore());
 
@@ -21,4 +24,10 @@ describe('Car Model', () => {
 		});
 	});
 
+	describe('searching all cars', () => {
+		it('successfully found', async () => {
+			const result = await carModel.read();
+			expect(result).to.be.deep.equal(allCarsMock);
+		});
+	});
 });
